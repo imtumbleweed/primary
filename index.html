@@ -142,8 +142,8 @@
 <div id = "body">
     <div>
         <b>API Tests</b><br/>
-        <input type = "text" id = "un" placeholder = "username" style = "width: 90px"/>
-        <input type = "text" id = "email_address" placeholder = "email address"/>
+        <input type = "text" id = "un" placeholder = "username" style = "width: 90px" />
+        <input type = "text" id = "email_address" placeholder = "email address" />
             <input id = "user_button" type = "button"
                    onclick = "let payload = { 'email_address': window.email_address.value, 'username': window.un.value, 'password': 'password'}; User.create( payload )" value = "register user" /><br/>
         <input type = "button" onclick = "User.update({id: 1, password_sha3: 'newpass123A'})" value = "update user properties" /><br/>
@@ -156,6 +156,6 @@
         <input type = "button" onclick = "User.like({id:{user:1, tweet:1}})" value = "like tweet id=1 by user id=1" /><br/>
     </div>
 </div>
-<div id = "footer"></div>
+<div id = "footer">2020 Primary. Copyright Something Something.</div>
 </body>
 </html>
