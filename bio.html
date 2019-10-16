@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Document</title>
+		<script type="module">
+			/* Front-end API */
+
+			class User {
+				constructor() {}
+			}
+
+			// Create payload -- redundant everywhere, now in neat make() function
+			let make = function(payload) {
+				return {
+					method: 'post',
+					headers: { Accept: 'application/json' },
+					body: JSON.stringify(payload)
+				};
+			};
+
+			let printDOM = function(selector, data) {
+				let elements = document.querySelectorAll(selector);
+				elements.forEach(function(e) {
+					e.innerHTML = data;
+				});
+			};
+
+			/* Read (get) user from database:
+         payload = {
+         id: 1,
+         token: "ABC123xyz" } */
+			User.get = function(payload) {
+				fetch('/api/user/get', make(payload))
+					.then(promise => promise.json())
+					.then(json => {
+						console.log(json);
+						const {
+							avatar,
+							city,
+							state,
+							country,
+							email_address,
+							username
+						} = json.user;
+						document.title = 'Primary | ' + username;
+						printDOM('#username', username);
+						printDOM('#posted_by', username);
+						printDOM('#living_place', `${city}, ${state}, ${country}`);
+					});
+			};
+			// Because this is <script type = "module", to make User object
+			// globally available so it can be used in HTML attribute events,
+			// we have to manually add it to window object
+			window.onload = () => {
+				User.get({ id: 1 });
+				window.User = User;
+			};
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<div class="avatar">
+					<img src="http://placekitten.com/g/200/300" alt="avatar" />
+				</div>
+				<div class="info">
+					<div id="username"></div>
+					<div id="living_place"></div>
+				</div>
+			</header>
+			<section class="posts">
+				<article class="post" style="border: 1px solid black;">
+					<h2 id="posted_by"></h2>
+					<h4>date</h4>
+					<p>
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores
+						sunt saepe perferendis animi voluptas aliquid earum suscipit eum
+						facere nihil sequi, deserunt cum debitis odio hic consequatur! Ab,
+						obcaecati suscipit.
+					</p>
+				</article>
+				<article class="post" style="border: 1px solid black;">
+					<h2 id="posted_by"></h2>
+					<h4>date</h4>
+					<p>
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores
+						sunt saepe perferendis animi voluptas aliquid earum suscipit eum
+						facere nihil sequi, deserunt cum debitis odio hic consequatur! Ab,
+						obcaecati suscipit.
+					</p>
+				</article>
+			</section>
+		</div>
+	</body>
+</html>
