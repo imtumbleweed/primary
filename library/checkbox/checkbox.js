@@ -7,21 +7,21 @@ export class Checkbox {
       document.querySelectorAll(".checkbox").forEach(function(obj) {
         obj.addEventListener("click", function(event) {
           let state = this.getAttribute("data-value");
-          state == "off" ? this.setAttribute("data-value", "on") : this.setAttribute("data-value", "off");
+          state === "off" ? this.setAttribute("data-value", "on") : this.setAttribute("data-value", "off");
         });
       });
       // Attach event listener to the checkbox label
       document.querySelectorAll(".checkbox-label").forEach(function(obj) {
-        let f = obj.getAttribute("for");
-        if (f) {
+        let labelAttribute = obj.getAttribute("for");
+        if (labelAttribute) {
           obj.addEventListener("click", function(event) {
-            let checkbox = document.getElementById(f);
+            let checkbox = document.getElementById(labelAttribute);
             if (checkbox) {
                 let state = checkbox.getAttribute("data-value");
-                state == "off" ? checkbox.setAttribute("data-value", "on") : checkbox.setAttribute("data-value", "off");
+                state === "off" ? checkbox.setAttribute("data-value", "on") : checkbox.setAttribute("data-value", "off");
             }
           });
         }
       });
     }
-};
+}
