@@ -22,11 +22,11 @@ http.createServer(function(request, response) {
         filename = './index.html';
 
     let extension = String(path.extname(filename)).toLowerCase();
-    let mime = { '.html': 'text/html', 
-                   '.js': 'text/javascript', 
-                  '.css': 'text/css', 
-                 '.json': 'application/json', 
-                  '.png': 'image/png', 
+    let mime = { '.html': 'text/html',
+                   '.js': 'text/javascript',
+                  '.css': 'text/css',
+                 '.json': 'application/json',
+                  '.png': 'image/png',
                   '.jpg': 'image/jpg', 
                   '.gif': 'image/gif', 
                 };
