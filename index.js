@@ -40,11 +40,7 @@ http.createServer(function(request, response) {
               response.end('Server error: ' + error.code + ' ..\n');
               response.end();
           }
-        } else {
-            console.log("API request detecting...");
-            response.writeHead(200, { 'Content-Type': contentType });
-            response.end(content, 'utf-8');
-        }
+        } 
     });
 }).listen(port, ip);
 
