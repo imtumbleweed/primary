@@ -301,6 +301,26 @@ function action_authenticate_user(request, payload) {
     }).catch((error) => { console.log(error) });
 }
 
+// Requires payload.email_address = <email_address>
+function action_send_reset_link(request, payload) {
+    return new Promise((resolve, reject) => {
+        if (!request || !request.headers || !payload)
+            reject("Error: Wrong request, missing request headers, or missing payload");
+        let q = `SELECT email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
+        database.connection.query(q,
+            (error, results) => {
+                if (error)
+                    throw (error);
+                if (results.length === 0)
+                    resolve(`{"success": false, "message": "We couldn't find your account with that information"}`);
+                else {
+                   console.log(request.origin);
+                   resolve(`{"success": true, "message": "Password reset link has been sent to ${payload.email_address}", "reset_link": ""}`);
+                }
+            });
+    }).catch((error) => { console.log(error) });
+}
+
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
     return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
@@ -330,6 +350,7 @@ Action.update_user = action_update_user;
 Action.authenticate_user = action_authenticate_user;
 Action.create_session = action_create_session;
 Action.get_session = action_get_session;
+Action.send_reset_link = action_send_reset_link;
 
 const resp = response => content => respond(response, content);
 
@@ -390,6 +411,10 @@ class API {
 
                 if (identify("user", "authenticate")) // Authenticate user
                     Action.authenticate_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("password", "email")) // Send password reset link
+                    Action.send_reset_link(request, json(request.chunks))
                         .then(content => respond(response, content));
             });
         }
