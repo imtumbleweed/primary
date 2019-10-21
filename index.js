@@ -22,7 +22,14 @@ http.createServer(function(request, response) {
         filename = './index.html';
 
     let extension = String(path.extname(filename)).toLowerCase();
-    let mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpg', '.gif': 'image/gif', }
+    let mime = { '.html': 'text/html',
+                   '.js': 'text/javascript',
+                  '.css': 'text/css',
+                 '.json': 'application/json',
+                  '.png': 'image/png',
+                  '.jpg': 'image/jpg', 
+                  '.gif': 'image/gif', 
+                };
     let contentType = mime[extension] || 'application/octet-stream';
 
     fs.readFile(filename, function (error, content) {
@@ -35,16 +42,16 @@ http.createServer(function(request, response) {
                         response.writeHead(200, { 'Content-Type': contentType });
                         response.end(content, 'utf-8');
                     });
-          } else {
+            } else {
               response.writeHead(500)
               response.end('Server error: ' + error.code + ' ..\n');
               response.end();
-          }
-        } else {
-            console.log("API request detecting...");
-            response.writeHead(200, { 'Content-Type': contentType });
-            response.end(content, 'utf-8');
-        }
+            }
+        } 
+        console.log("API request detecting...");
+        response.writeHead(200, { 'Content-Type': contentType });
+        response.end(content, 'utf-8');
+        
     });
 }).listen(port, ip);
 
