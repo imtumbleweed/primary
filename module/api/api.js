@@ -314,12 +314,11 @@ function action_send_reset_link(request, payload) {
                 if (results.length === 0)
                     resolve(`{"success": false, "message": "We couldn't find your account with that information"}`);
                 else {
-
-                   database.connection.query(`INSERT INTO password_resets (user_id, token, expiry_date) VALUES (${results[0].id}, "${md5(payload.email_address)}", DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 MINUTE))`, function(error,results) {
+                   database.connection.query(`INSERT INTO password_resets VALUES ("${payload.email_address}", "${md5(payload.email_address)}", DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 MINUTE))`, function(error) {
                         if(error) throw error;
                         console.log("Token created"); 
+                        resolve(`{"success": true, "message": "Password reset link has been sent to ${payload.email_address}"}`);
                    });
-                   resolve(`{"success": true, "message": "Password reset link has been sent to ${payload.email_address}", "reset_link": ""}`);
                 }
             });
     }).catch((error) => { console.log(error) });
