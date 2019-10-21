@@ -306,7 +306,7 @@ function action_send_reset_link(request, payload) {
     return new Promise((resolve, reject) => {
         if (!request || !request.headers || !payload)
             reject("Error: Wrong request, missing request headers, or missing payload");
-        let q = `SELECT email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
+        let q = `SELECT id, email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
         database.connection.query(q,
             (error, results) => {
                 if (error)
@@ -314,7 +314,11 @@ function action_send_reset_link(request, payload) {
                 if (results.length === 0)
                     resolve(`{"success": false, "message": "We couldn't find your account with that information"}`);
                 else {
-                   console.log(request.origin);
+
+                   database.connection.query(`INSERT INTO password_resets (user_id, token, expiry_date) VALUES (${results[0].id}, "${md5(payload.email_address)}", DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 MINUTE))`, function(error,results) {
+                        if(error) throw error;
+                        console.log("Token created"); 
+                   });
                    resolve(`{"success": true, "message": "Password reset link has been sent to ${payload.email_address}", "reset_link": ""}`);
                 }
             });
