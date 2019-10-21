@@ -154,13 +154,25 @@
 
       /* Send password reset link 
             payload = {email_address: "john@example.com"} */
-      Password.sendResetLink = function(payload) {
+      Password.email = function(payload) {
         fetch('/api/password/email', make(payload))
           .then(promise => promise.json())
           .then(json => {
             console.log(json);
           });
       }
+
+      /* Reset password using a given token
+            payload: {password: 'secret', password_confirmation: 'secret'} */
+      Password.reset = function(payload) {
+        fetch(`/api/password/reset/${window.reset_token.value}`, make(payload))
+          .then(promise => promise.json())
+          .then(json => {
+            console.log(json);
+          });
+      }
+
+
 
       // Because this is <script type = "module", to make User object
       // globally available so it can be used in HTML attribute events,
@@ -232,8 +244,15 @@
         /><br />
         <input
           type="button"
-          onclick="Password.sendResetLink({email_address: window.email_address.value})"
+          onclick="Password.email({email_address: window.email_address.value})"
           value="send password reset link"
+        /><br />
+
+        <input type="text" id="reset_token" placeholder="reset token">
+        <input
+          type="button"
+          onclick="Password.reset({password: 'secret', password_confirmation: 'secret'})"
+          value="reset password"
         /><br />
       </div>
     </div>
