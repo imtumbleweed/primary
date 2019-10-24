@@ -301,6 +301,57 @@ function action_authenticate_user(request, payload) {
     }).catch((error) => { console.log(error) });
 }
 
+// Requires payload.email_address = <email_address>
+function action_send_reset_link(request, payload) {
+    return new Promise((resolve, reject) => {
+        if (!request || !request.headers || !payload)
+            reject("Error: Wrong request, missing request headers, or missing payload");
+        let q = `SELECT id, email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
+        database.connection.query(q,
+            (error, results) => {
+                if (error)
+                    throw (error);
+                if (results.length === 0)
+                    resolve(`{"success": false, "message": "We couldn't find your account with that information"}`);
+                else {
+                   database.connection.query(`INSERT INTO password_resets VALUES ("${payload.email_address}", "${md5(payload.email_address)}", DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 MINUTE))`, function(error) {
+                        if(error) throw error;
+                        console.log("Token created"); 
+                        resolve(`{"success": true, "message": "Password reset link has been sent to ${payload.email_address}"}`);
+                   });
+                }
+            });
+    }).catch((error) => { console.log(error) });
+}
+
+// Requires payload.password = <String password> and payload.password_confirmation = <String password>
+function action_reset_password(request, payload) {
+    console.log('called');
+    return new Promise((resolve, reject) => {
+        if (!request || !request.headers || !payload || !API.parts[3])
+            reject("Error: Wrong request, missing request headers, or missing payload");
+        let q = `SELECT * FROM  password_resets WHERE token = '${API.parts[3]}' AND  expiry_date > CURRENT_TIMESTAMP() LIMIT 1`;
+        database.connection.query(q,
+            (error, results) => {
+                if (error)
+                    throw (error);
+                if (results.length === 0)
+                    resolve(`{"success": false, "message": "Reset token expired."}`);
+                else {
+                    if(payload.password === payload.password_confirmation) {
+                        let q = `UPDATE user SET password_md5 = '${md5(payload.password)}' WHERE  email_address = '${results[0].email_address}'`;
+                        database.connection.query(q, function (errors, results) {
+                            if(errors) throw error;
+                            resolve(`{"success": true, "message": "Password successfully reset!"}`);
+                        });
+                    } else {
+                        resolve(`{"success": false, "message": "Passwords does not match."}`);
+                    }
+                }
+            });
+    }).catch((error) => { console.log(error) });
+}
+
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
     return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
@@ -330,6 +381,8 @@ Action.update_user = action_update_user;
 Action.authenticate_user = action_authenticate_user;
 Action.create_session = action_create_session;
 Action.get_session = action_get_session;
+Action.send_reset_link = action_send_reset_link;
+Action.reset_password = action_reset_password;
 
 const resp = response => content => respond(response, content);
 
@@ -390,6 +443,14 @@ class API {
 
                 if (identify("user", "authenticate")) // Authenticate user
                     Action.authenticate_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("password", "email")) // Send password reset link
+                    Action.send_reset_link(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("password", "reset")) // Reset password
+                    Action.reset_password(request, json(request.chunks))
                         .then(content => respond(response, content));
             });
         }
