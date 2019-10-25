@@ -389,6 +389,8 @@ Action.create_session = action_create_session;
 Action.get_session = action_get_session;
 Action.send_reset_link = action_send_reset_link;
 Action.reset_password = action_reset_password;
+Action.reset_password = action_reset_password;
+Action.post_tweet = action_post_tweet;
 
 const resp = response => content => respond(response, content);
 
@@ -457,6 +459,10 @@ class API {
 
                 if (identify("password", "reset")) // Reset password
                     Action.reset_password(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("tweet", "post")) // Post a "tweet"
+                    Action.post_tweet(request, json(request.chunks))
                         .then(content => respond(response, content));
             });
         }
