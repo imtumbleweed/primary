@@ -326,7 +326,6 @@ function action_send_reset_link(request, payload) {
 
 // Requires payload.password = <String password> and payload.password_confirmation = <String password>
 function action_reset_password(request, payload) {
-    console.log('called');
     return new Promise((resolve, reject) => {
         if (!request || !request.headers || !payload || !API.parts[3])
             reject("Error: Wrong request, missing request headers, or missing payload");
@@ -349,6 +348,13 @@ function action_reset_password(request, payload) {
                     }
                 }
             });
+    }).catch((error) => { console.log(error) });
+}
+
+function action_post_tweet(request, payload) {
+    return new Promise((resolve, reject) => {
+        let q = ""; // query
+        /* insert message into tweet table, unless previous tweet posted by that user is identical */
     }).catch((error) => { console.log(error) });
 }
 
@@ -454,7 +460,12 @@ class API {
                         .then(content => respond(response, content));
             });
         }
+
+        if (request.method == 'GEt') {
+            /* GET placeholder */
+        }
     }
+
     static catchAPIrequest(request) {
         request[0] == "/" ? request = request.substring(1, request.length) : null;
         if (request.constructor === String)
