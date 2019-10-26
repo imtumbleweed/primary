@@ -9,4 +9,38 @@
     -ms-box-sizing: border-box;
 }
 /* Styling for pop up 1 */
-
+a.button{
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    background: yellowgreen;
+}
+div.overlay{
+    position: absolute;
+    top:0;
+    right:0;
+    left:0;
+    bottom:0;
+    background: rgba(0, 0, 0, .6);
+    display: flex;
+    transition: opacity 200ms;
+    visibility: hidden;
+	opacity: 0;
+}
+div.overlay:target{
+    visibility: visible;
+    opacity: 1;
+}
+.popup1{
+    width: 500px;
+    height: 200px;
+    background: white;
+    position: relative;
+    color: black;
+    margin: auto;
+    margin-top: 2em;
+    padding: 1em;
+}
+.popup1 a{
+    color: black;
+}
