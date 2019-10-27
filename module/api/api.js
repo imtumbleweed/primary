@@ -11,369 +11,349 @@ const { Keccak } = require('sha3');
 // Generate timestamp: if full argument is false/undefined,
 // timestamp is divided by 1000 to generate linux-length timestamp
 function timestamp(full) {
-    let date = new Date();
-    let timestamp = date.getTime();
-    return full ? Math.floor(timestamp) : Math.floor(timestamp / 1000);
+	let date = new Date();
+	let timestamp = date.getTime();
+	return full ? Math.floor(timestamp) : Math.floor(timestamp / 1000);
 }
 
 // Generate string "1s", "2h", etc between now and "time" argument
 function elapsed(time) {
-    const $SECONDS = Math.abs(timestamp() - time);
-    const $iv_table = ["s", "min", "h", "d", "mo", "y", "s", "min", "h", "d", "mo", "y"];
-    const $iv = [$SECONDS,
-        ($SECONDS - ($SECONDS % 60)) / 60,
-        ($SECONDS - ($SECONDS % 3600)) / 3600,
-        ($SECONDS - ($SECONDS % (3600 * 24))) / (3600 * 24),
-        ($SECONDS - ($SECONDS % (3600 * 24 * 30))) / (3600 * 24 * 30),
-        ($SECONDS - ($SECONDS % (3600 * 24 * 30 * 12))) / (3600 * 24 * 30 * 12)];
-    for (let $i = 5; $i >= 0; $i--) {
-        $r = $iv[$i];
-        if ($r > 0) {
-            if (($r > 1 || $r == 0))
-                $i += 6;
-            return $r + "" + $iv_table[$i];
-        }
-    }
+	const $SECONDS = Math.abs(timestamp() - time);
+	const $iv_table = ["s", "min", "h", "d", "mo", "y", "s", "min", "h", "d", "mo", "y"];
+	const $iv = [$SECONDS,
+		($SECONDS - ($SECONDS % 60)) / 60,
+		($SECONDS - ($SECONDS % 3600)) / 3600,
+		($SECONDS - ($SECONDS % (3600 * 24))) / (3600 * 24),
+		($SECONDS - ($SECONDS % (3600 * 24 * 30))) / (3600 * 24 * 30),
+		($SECONDS - ($SECONDS % (3600 * 24 * 30 * 12))) / (3600 * 24 * 30 * 12)];
+	for (let $i = 5; $i >= 0; $i--) {
+		$r = $iv[$i];
+		if ($r > 0) {
+			if (($r > 1 || $r == 0))
+				$i += 6;
+			return $r + "" + $iv_table[$i];
+		}
+	}
 }
 
 // Check if  property with value exists on an object
 Object.prototype.exists = function (property_name, value) {
-    for (let i = 0; i < this.length; i++) {
-        let o = this[i];
-        if (o[property_name] != undefined)
-            if (o[property_name] == value)
-                return true;
-    }
-    return false;
+	for (let i = 0; i < this.length; i++) {
+		let o = this[i];
+		if (o[property_name] != undefined)
+			if (o[property_name] == value)
+				return true;
+	}
+	return false;
 }
 
 // Check if value exists in array
 Array.prototype.exists = function (value) {
-    for (let i = 0; i < this.length; i++)
-        if (this[i] == value)
-            return true;
-    return false;
+	for (let i = 0; i < this.length; i++)
+		if (this[i] == value)
+			return true;
+	return false;
 }
 
 class database {
-    constructor() { }
-    static create() {
-        let message = "Creating MySQL connection...";
-        this.connection = mysql.createConnection(db_config);
-        this.connection.connect();
-        console.log(message + "Ok.");
-    }
+	constructor() { }
+	static create() {
+		let message = "Creating MySQL connection...";
+		this.connection = mysql.createConnection(db_config);
+		this.connection.connect();
+		console.log(message + "Ok.");
+	}
 }
 
 // Requires payload.email_address = <email_address>
 function action_register_user(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        let q = `SELECT email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
-        database.connection.query(q,
-            (error, results) => { // Check if user already exists in database
-                if (error)
-                    throw (error);
-                let result = results[0];
-                if (results && results.length != 0 && result.email_address == payload.email_address)
-                    resolve(`{"success": false, "message": "user already exists"}`);
-                else {
-                    let avatar = JSON.stringify({ "head": 1, "eyes": 1 });
-                    // Encrypt payload.password with md5 algorithm
-                    let password_md5 = md5(payload.password);
-                    let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`, `avatar` )";
-                    let values = `VALUES( '${payload.username}', '${payload.email_address}', '${password_md5}', 'first', 'last', '${avatar}')`;
-                    database.connection.query("INSERT INTO user " + fields + " " + values,
-                        (error, results) => { // Create new user in database
-                            if (error)
-                                throw (error);
-                            resolve(`{"success": true, "message": "user registered"}`);
-                        });
-                }
-            });
-    }).catch((error) => { console.log(error) });
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		let q = `SELECT email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
+		database.connection.query(q,
+			(error, results) => { // Check if user already exists in database
+				if (error)
+					throw (error);
+				let result = results[0];
+				if (results && results.length != 0 && result.email_address == payload.email_address)
+					resolve(`{"success": false, "message": "user already exists"}`);
+				else {
+					let avatar = JSON.stringify({ "head": 1, "eyes": 1 });
+					// Encrypt payload.password with md5 algorithm
+					let password_md5 = md5(payload.password);
+					let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`, `avatar` )";
+					let values = `VALUES( '${payload.username}', '${payload.email_address}', '${password_md5}', 'first', 'last', '${avatar}')`;
+					database.connection.query("INSERT INTO user " + fields + " " + values,
+						(error, results) => { // Create new user in database
+							if (error)
+								throw (error);
+							resolve(`{"success": true, "message": "user registered"}`);
+						});
+				}
+			});
+	}).catch((error) => { console.log(error) });
 }
 
 // Requires payload.id = <Numeric User ID>
 function action_get_user(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        database.connection.query("SELECT * FROM user WHERE id = '" + payload.id + "' LIMIT 1",
-            (error, results) => { // Check if user already exists in database
-                if (error) throw (error);
-                let result = results[0];
-                if (results && results.length != 0 && result.id == payload.id) {
-                    result.found = true;
-                    resolve(`{"found": true, "user": ${JSON.stringify(result)}, "message": "user found"}`);
-                } else
-                    resolve(`{"found": false, "user": null, "message": "user with this id doesn't exist"}`);
-            });
-    }).catch(error => console.log(error));
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		database.connection.query("SELECT * FROM user WHERE id = '" + payload.id + "' LIMIT 1",
+			(error, results) => { // Check if user already exists in database
+				if (error) throw (error);
+				let result = results[0];
+				if (results && results.length != 0 && result.id == payload.id) {
+					result.found = true;
+					resolve(`{"found": true, "user": ${JSON.stringify(result)}, "message": "user found"}`);
+				} else
+					resolve(`{"found": false, "user": null, "message": "user with this id doesn't exist"}`);
+			});
+	}).catch(error => console.log(error));
 }
 
 function action_get_user_promiseless(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        database.connection.query("SELECT * FROM user WHERE id = '" + payload.id + "' LIMIT 1",
-            (error, results) => { // Check if user already exists in database
-                if (error) throw (error);
-                let result = results[0];
-                if (results && results.length != 0 && result.id == payload.id) {
-                    resolve(`{"found": true, "user": ${JSON.stringify(result)}, "message": "user found"}`);
-                } else
-                    resolve(`{"found": false, "user": null, "message": "user with this id doesn't exist"}`);
-            });
-    }).catch(error => console.log(error));
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		database.connection.query("SELECT * FROM user WHERE id = '" + payload.id + "' LIMIT 1",
+			(error, results) => { // Check if user already exists in database
+				if (error) throw (error);
+				let result = results[0];
+				if (results && results.length != 0 && result.id == payload.id) {
+					resolve(`{"found": true, "user": ${JSON.stringify(result)}, "message": "user found"}`);
+				} else
+					resolve(`{"found": false, "user": null, "message": "user with this id doesn't exist"}`);
+			});
+	}).catch(error => console.log(error));
 }
 
 function action_delete_user(request, payload) {
-    return new Promise((resolve, reject) => {
-        // Header or payload are missing
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        // Payload must specify user id
-        if (!payload.id)
-            reject("User id not specified!");
-        let query = "DELETE from `user` WHERE `id` = " + payload.id;
-        database.connection.query(query, (error, results) => {
-            if (error)
-                throw (error);
-            let result = results[0];
-            console.log("results[0] = ", results[0]);
-            console.log("result = ", result);
-            resolve(`{"success": true, "message": "user updated!"}`);
-        });
-    }).catch(error => console.log(error));
+	return new Promise((resolve, reject) => {
+		// Header or payload are missing
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		// Payload must specify user id
+		if (!payload.id)
+			reject("User id not specified!");
+		let query = "DELETE from `user` WHERE `id` = " + payload.id;
+		database.connection.query(query, (error, results) => {
+			if (error)
+				throw (error);
+			let result = results[0];
+			console.log("results[0] = ", results[0]);
+			console.log("result = ", result);
+			resolve(`{"success": true, "message": "user updated!"}`);
+		});
+	}).catch(error => console.log(error));
 }
 
 function action_update_user(request, payload) {
-    return new Promise((resolve, reject) => {
-        // Header or payload are missing
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        // Payload must specify user id
-        if (!payload.id)
-            reject("User id not specified!");
-        // Columns allowed to be changed:
-        let allowed = ["id", "email_address", "password_md5"];
-        // Exclude not-allowed fields from payload
-        Object.entries(payload).map((value, index, obj) => {
-            let name = value[0];
-            if (!allowed.exists(name)) delete payload[name];
-        });
-        // Start MySQL query
-        let query = "UPDATE user SET ";
-        // Build the rest of MySQL query from payload
-        Object.entries(payload).map((item, index, object) => {
-            let name = item[0];
-            let value = payload[name];
-            index != 0 ? query += ", " : null;
-            query += "`" + name + "` = '" + value + "'";
-        });
-        // End query
-        query += " WHERE `id` = '" + payload.id + "'";
-        // Execute MySQL query we just created
-        database.connection.query(query, (error, results) => {
-            if (error)
-                throw (error);
-            let result = results[0];
-            console.log("results[0] = ", results[0]);
-            console.log("result = ", result);
-            resolve(`{"success": true, "message": "user updated!"}`);
-        });
+	return new Promise((resolve, reject) => {
+		// Header or payload are missing
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		// Payload must specify user id
+		if (!payload.id)
+			reject("User id not specified!");
+		// Columns allowed to be changed:
+		let allowed = ["id", "email_address", "password_md5"];
+		// Exclude not-allowed fields from payload
+		Object.entries(payload).map((value, index, obj) => {
+			let name = value[0];
+			if (!allowed.exists(name)) delete payload[name];
+		});
+		// Start MySQL query
+		let query = "UPDATE user SET ";
+		// Build the rest of MySQL query from payload
+		Object.entries(payload).map((item, index, object) => {
+			let name = item[0];
+			let value = payload[name];
+			index != 0 ? query += ", " : null;
+			query += "`" + name + "` = '" + value + "'";
+		});
+		// End query
+		query += " WHERE `id` = '" + payload.id + "'";
+		// Execute MySQL query we just created
+		database.connection.query(query, (error, results) => {
+			if (error)
+				throw (error);
+			let result = results[0];
+			console.log("results[0] = ", results[0]);
+			console.log("result = ", result);
+			resolve(`{"success": true, "message": "user updated!"}`);
+		});
 
-    }).catch(error => null);
+	}).catch(error => null);
 }
 
 function action_login(request, payload) {
-    return new Promise((resolve, reject) => {
-        // First, get the user from database by payload.id
-        let query = `SELECT * FROM \`user\` WHERE \`username\` = '${payload.username}'`;
-        console.log(query);
-        database.connection.query(query,
-            (error, results) => { // Check if user already exists in database
-                if (error)
-                    throw (error);
-                let result = results[0];
-                /* console.log("result = ", result);
-                console.log("payload.username = ", payload.username);
-                console.log("payload.password = ", payload.password);
-                console.log("password 1 = ", md5(payload.password));
-                console.log("password 2 = ", result.password_md5); */
-                if (results && results.length != 0 && result.username == payload.username) {
-                    // result.found = true;
-                    // Check if submitted password is correct
-                    if (md5(payload.password) == result.password_md5) {
-                        delete result.email_address; // don't send email to front-end
-                        delete result.password_md5; // don't send md5 password to front-end
-                        resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
-                    } else
-                        resolve(`{"success": false, "user": null, "message": "incorrect username or password"}`);
-                }
-                // User not found
-                resolve(`{"success": false, "user": null, "message": "user with this username(${payload.username}) doesn't exist"}`);
-            });
-    }).catch(error => console.log(error));
+	return new Promise((resolve, reject) => {
+		// First, get the user from database by payload.id
+		let query = `SELECT * FROM \`user\` WHERE \`username\` = '${payload.username}'`;
+		console.log(query);
+		database.connection.query(query,
+			(error, results) => { // Check if user already exists in database
+				if (error)
+					throw (error);
+				let result = results[0];
+        /* console.log("result = ", result);
+        console.log("payload.username = ", payload.username);
+        console.log("payload.password = ", payload.password);
+        console.log("password 1 = ", md5(payload.password));
+        console.log("password 2 = ", result.password_md5); */
+				if (results && results.length != 0 && result.username == payload.username) {
+					// result.found = true;
+					// Check if submitted password is correct
+					if (md5(payload.password) == result.password_md5) {
+						delete result.email_address; // don't send email to front-end
+						delete result.password_md5; // don't send md5 password to front-end
+						resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
+					} else
+						resolve(`{"success": false, "user": null, "message": "incorrect username or password"}`);
+				}
+				// User not found
+				resolve(`{"success": false, "user": null, "message": "user with this username(${payload.username}) doesn't exist"}`);
+			});
+	}).catch(error => console.log(error));
 }
 
 function action_logout(request, payload) {
-    return new Promise((resolve, reject) => {
-        /* implement */
-    }).catch(error => console.log(error));;
+	return new Promise((resolve, reject) => {
+		/* implement */
+	}).catch(error => console.log(error));;
 }
 
 function action_create_session(request, payload) {
-    // Create unique authentication token
-    function create_auth_token() {
-        let token = md5(timestamp(true) + "");
-        return token;
-    }
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        database.connection.query("SELECT * FROM session WHERE user_id = '" + payload.id + "' LIMIT 1",
-            (error, results) => { // Check if session already exists
-                if (error) throw (error);
-                let result = results[0];
-                if (results && results.length != 0 && result.user_id == payload.id) {
-                    result.found = true;
-                    resolve(`{"found": true,
+	// Create unique authentication token
+	function create_auth_token() {
+		let token = md5(timestamp(true) + "");
+		return token;
+	}
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		database.connection.query("SELECT * FROM session WHERE user_id = '" + payload.id + "' LIMIT 1",
+			(error, results) => { // Check if session already exists
+				if (error) throw (error);
+				let result = results[0];
+				if (results && results.length != 0 && result.user_id == payload.id) {
+					result.found = true;
+					resolve(`{"found": true,
                           "token": token,
                           "session": ${JSON.stringify(result)},
                           "message": "session already exists"}`);
-                } else { // This session doesn't exist, create it
-                    // Create auth token
-                    let token = create_auth_token();
-                    database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp() + "', '" + token + "')",
-                        (error, results) => {
-                            if (error) throw (error);
-                            resolve(`{"found" : false,
+				} else { // This session doesn't exist, create it
+					// Create auth token
+					let token = create_auth_token();
+					database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp() + "', '" + token + "')",
+						(error, results) => {
+							if (error) throw (error);
+							resolve(`{"found" : false,
                                   "token" : token,
                                   "user_id": ${payload.user_id},
                                   "message": "session was created"}`);
-                        });
-                }
-            });
-    }).catch(error => { console.log(error) });
+						});
+				}
+			});
+	}).catch(error => { console.log(error) });
+}
+
+// Requirements:
+// - payload.user_id_to = <Numeric User ID>
+// - payload.user_id_from = <Numeric User ID>
+// - payload.dm_conversation_id = <Numberic DM Conversation ID>
+// - payload.message_body = <message string>
+function send_direct_message(request, payload) {
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		let values = "VALUES( '" + payload.dm_conversation_id + "', '" + payload.user_id_from + "', '" + payload.user_id_to + "', '" + payload.message_body + "', '" + timestamp() + "' )";
+		let q = "INSERT INTO direct_messages ( `dm_conversation_id`, `user_id_from`, `user_id_to`, `message_body`, `timestamp`) " + values + "";
+		database.connection.query(q,
+			(error, results) => {
+				if (error) throw (error);
+				resolve('{"message": "direct message was sent"}');
+			}
+		)
+	}).catch((error) => { console.log(error) })
+}
+
+// Requirements:
+// - payload.user_id_to = <Numeric User ID>
+// - payload.user_id_from = <Numeric User ID>
+function create_dm_conversation(request, payload) {
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		let values = "VALUES( '" + payload.user_id_from + "', '" + payload.user_id_to + "' )";
+		database.connection.query("INSERT INTO dm_conversations ( `user_id_from`, `user_id_to` ) " + values + "",
+			(error, results) => {
+				if (error) throw (error);
+				resolve('{"message": "direct message conversation was created"}');
+			}
+		)
+	}).catch((error) => { console.log(error) })
 }
 
 function action_get_session(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        database.connection.query("SELECT * FROM session WHERE user_id = '" + payload.id + "' LIMIT 1",
-            (error, results) => { // Return session
-                if (error)
-                    throw (error);
-                let result = results[0];
-                if (results && results.length != 0 && result.user_id == payload.id) {
-                    result.found = true;
-                    resolve(`{"found": true,
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		database.connection.query("SELECT * FROM session WHERE user_id = '" + payload.id + "' LIMIT 1",
+			(error, results) => { // Return session
+				if (error)
+					throw (error);
+				let result = results[0];
+				if (results && results.length != 0 && result.user_id == payload.id) {
+					result.found = true;
+					resolve(`{"found": true,
                           "session": ${JSON.stringify(result)},
                           "message": "session found"}`);
-                } else
-                    resolve(`{"found": false, "session": null, "message": "session found"}`);
-            });
-    }).catch((error) => { console.log(error) });
+				} else
+					resolve(`{"found": false, "session": null, "message": "session found"}`);
+			});
+	}).catch((error) => { console.log(error) });
 }
 
 function action_authenticate_user(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        database.connection.query("SELECT * FROM session WHERE token = '" + payload.token + "' LIMIT 1",
-            (error, results) => { // Return session
-                if (error)
-                    throw (error);
-                if (results.length == 0) {
-                    console.log("API.authenticate, results.length == 0 (session with token not found)");
-                    reject(`{"success": false, "message": "token not found in session"}`);
-                } else {
-                    //console.log( results );
-                    //console.log( results[0] );
-                    let token = JSON.stringify({ token: results[0].token, type: "admin" });
-                    resolve(`{"success": true, "message": "user (id=${results[0].user_id}) was successfully authenticated", "token" : ${token}}`);
-                }
-            });
-    }).catch((error) => { console.log(error) });
-}
-
-// Requires payload.email_address = <email_address>
-function action_send_reset_link(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload)
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        let q = `SELECT id, email_address FROM user WHERE email_address = '${payload.email_address}' LIMIT 1`;
-        database.connection.query(q,
-            (error, results) => {
-                if (error)
-                    throw (error);
-                if (results.length === 0)
-                    resolve(`{"success": false, "message": "We couldn't find your account with that information"}`);
-                else {
-                   database.connection.query(`INSERT INTO password_resets VALUES ("${payload.email_address}", "${md5(payload.email_address)}", DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 MINUTE))`, function(error) {
-                        if(error) throw error;
-                        console.log("Token created"); 
-                        resolve(`{"success": true, "message": "Password reset link has been sent to ${payload.email_address}"}`);
-                   });
-                }
-            });
-    }).catch((error) => { console.log(error) });
-}
-
-// Requires payload.password = <String password> and payload.password_confirmation = <String password>
-function action_reset_password(request, payload) {
-    return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload || !API.parts[3])
-            reject("Error: Wrong request, missing request headers, or missing payload");
-        let q = `SELECT * FROM  password_resets WHERE token = '${API.parts[3]}' AND  expiry_date > CURRENT_TIMESTAMP() LIMIT 1`;
-        database.connection.query(q,
-            (error, results) => {
-                if (error)
-                    throw (error);
-                if (results.length === 0)
-                    resolve(`{"success": false, "message": "Reset token expired."}`);
-                else {
-                    if(payload.password === payload.password_confirmation) {
-                        let q = `UPDATE user SET password_md5 = '${md5(payload.password)}' WHERE  email_address = '${results[0].email_address}'`;
-                        database.connection.query(q, function (errors, results) {
-                            if(errors) throw error;
-                            resolve(`{"success": true, "message": "Password successfully reset!"}`);
-                        });
-                    } else {
-                        resolve(`{"success": false, "message": "Passwords does not match."}`);
-                    }
-                }
-            });
-    }).catch((error) => { console.log(error) });
-}
-
-function action_post_tweet(request, payload) {
-    return new Promise((resolve, reject) => {
-        let q = ""; // query
-        /* insert message into tweet table, unless previous tweet posted by that user is identical */
-    }).catch((error) => { console.log(error) });
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload");
+		database.connection.query("SELECT * FROM session WHERE token = '" + payload.token + "' LIMIT 1",
+			(error, results) => { // Return session
+				if (error)
+					throw (error);
+				if (results.length == 0) {
+					console.log("API.authenticate, results.length == 0 (session with token not found)");
+					reject(`{"success": false, "message": "token not found in session"}`);
+				} else {
+					//console.log( results );
+					//console.log( results[0] );
+					let token = JSON.stringify({ token: results[0].token, type: "admin" });
+					resolve(`{"success": true, "message": "user (id=${results[0].user_id}) was successfully authenticated", "token" : ${token}}`);
+				}
+			});
+	}).catch((error) => { console.log(error) });
 }
 
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
-    return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
+	return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
 }
 
 // General use respond function -- send json object back to the browser in response to a request
 function respond(response, content) {
-    console.log("responding = ", [content]);
-    const jsontype = "{ 'Content-Type': 'application/json' }";
-    response.writeHead(200, jsontype);
-    response.end(content, 'utf-8');
+	console.log("responding = ", [content]);
+	const jsontype = "{ 'Content-Type': 'application/json' }";
+	response.writeHead(200, jsontype);
+	response.end(content, 'utf-8');
 }
 
 // Convert buffer to JSON object
 function json(chunks) {
-    return JSON.parse(Buffer.concat(chunks).toString());
+	return JSON.parse(Buffer.concat(chunks).toString());
 }
 
 class Action { }
@@ -387,100 +367,87 @@ Action.update_user = action_update_user;
 Action.authenticate_user = action_authenticate_user;
 Action.create_session = action_create_session;
 Action.get_session = action_get_session;
-Action.send_reset_link = action_send_reset_link;
-Action.reset_password = action_reset_password;
-Action.reset_password = action_reset_password;
-Action.post_tweet = action_post_tweet;
+Action.create_dm_conversation = create_dm_conversation;
+Action.send_direct_message = send_direct_message;
 
 const resp = response => content => respond(response, content);
 
 class API {
 
-    constructor() { }
+	constructor() { }
 
-    static exec(request, response) {
+	static exec(request, response) {
 
-        console.log("API.exec(), parts = ", API.parts);
+		console.log("API.exec(), parts = ", API.parts);
 
-        if (request.method == 'POST') {
+		if (request.method == 'POST') {
 
-            request.url[0] == "/" ? request.url = request.url.substring(1, request.url.length) : null;
-            request.parts = request.url.split("/");
-            request.chunks = [];
+			request.url[0] == "/" ? request.url = request.url.substring(1, request.url.length) : null;
+			request.parts = request.url.split("/");
+			request.chunks = [];
 
-            // Start reading POST data chunks
-            request.on('data', segment => {
-                if (segment.length > 1e6) // 413 = "Request Entity Too Large"
-                    response.writeHead(413, { 'Content-Type': 'text/plain' }).end();
-                else
-                    request.chunks.push(segment);
-            });
+			// Start reading POST data chunks
+			request.on('data', segment => {
+				if (segment.length > 1e6) // 413 = "Request Entity Too Large"
+					response.writeHead(413, { 'Content-Type': 'text/plain' }).end();
+				else
+					request.chunks.push(segment);
+			});
 
-            // Finish reading POST data chunks
-            request.on('end', () => { // POST data fully received
+			// Finish reading POST data chunks
+			request.on('end', () => { // POST data fully received
 
-                API.parts = request.parts;
+				API.parts = request.parts;
 
-                if (identify("user", "register")) // Register (create) user
-                    Action.register_user(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("user", "register")) // Register (create) user
+					Action.register_user(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("user", "login")) // Log in
-                    Action.login(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("user", "login")) // Log in
+					Action.login(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("user", "logout")) // Log out
-                    Action.logout(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("user", "logout")) // Log out
+					Action.logout(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("user", "delete")) // Delete user
-                    Action.delete_user(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("user", "delete")) // Delete user
+					Action.delete_user(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("user", "get")) // Get user data
-                    Action.get_user(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("user", "get")) // Get user data
+					Action.get_user(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("user", "update")) // Update user
-                    Action.update_user(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("user", "update")) // Update user
+					Action.update_user(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("session", "create")) // Create session
-                    Action.create_session(request, json(request.chunks))
-                        .then(content => respond(response, content));
+				if (identify("session", "create")) // Create session
+					Action.create_session(request, json(request.chunks))
+						.then(content => respond(response, content));
 
-                if (identify("user", "authenticate")) // Authenticate user
-                    Action.authenticate_user(request, json(request.chunks))
-                        .then(content => respond(response, content));
-
-                if (identify("password", "email")) // Send password reset link
-                    Action.send_reset_link(request, json(request.chunks))
-                        .then(content => respond(response, content));
-
-                if (identify("password", "reset")) // Reset password
-                    Action.reset_password(request, json(request.chunks))
-                        .then(content => respond(response, content));
-
-                if (identify("tweet", "post")) // Post a "tweet"
-                    Action.post_tweet(request, json(request.chunks))
-                        .then(content => respond(response, content));
-            });
-        }
-
-        if (request.method == 'GEt') {
-            /* GET placeholder */
-        }
-    }
-
-    static catchAPIrequest(request) {
-        request[0] == "/" ? request = request.substring(1, request.length) : null;
-        if (request.constructor === String)
-            if (request.split("/")[0] == "api") {
-                API.parts = request.split("/");
-                return true;
-            }
-        return false;
-    }
+				if (identify("user", "authenticate")) // Authenticate user
+					Action.authenticate_user(request, json(request.chunks))
+						.then(content => respond(response, content));
+				if (identify("dm_conversation", "create")) // Start DM conversation
+					Action.create_dm_conversation(request, json(request.chunks))
+						.then(content => respond(response, content));
+				if (identify("direct_message", "send")) // Send DM
+					Action.send_direct_message(request, json(request.chunks))
+						.then(content => respond(response, content));
+			});
+		}
+	}
+	static catchAPIrequest(request) {
+		request[0] == "/" ? request = request.substring(1, request.length) : null;
+		if (request.constructor === String)
+			if (request.split("/")[0] == "api") {
+				API.parts = request.split("/");
+				return true;
+			}
+		return false;
+	}
 }
 
 API.parts = null;
