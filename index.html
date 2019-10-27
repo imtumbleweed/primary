@@ -2,6 +2,7 @@
   <head>
     <title>Primary</title>
     <link rel="stylesheet" type="text/css" href="style/lavacode.css" />
+    <link rel="stylesheet" href="popup.css">
     <script type="module">
       /* Front-end API */
 
@@ -255,7 +256,35 @@
           value="reset password"
         /><br />
       </div>
+
+      <h2>Pop up Example</h2>
+
+      <button id="openPopup">Open Popups</button>
+
+      <div id="firstPopup" class="popup">
+
+        <div class="popup-tweet">
+          <span class="close">&times;</span>
+          <p>Click on (&times) to open second popup.</p>
+          <p>Click on tweet to exit first popup</p>
+          <button id="tweet">Tweet</button>
+        </div>
+
+      </div>
+
+      <div id="secondPopup" class="popup">
+
+          <div class="popup-save">
+            <p>Click yes to close both popups</p>
+            <p> Click on no to go back to first popup</p>
+            <button class="no">No</button>
+            <button class="yes">Yes</button>
+          </div>
+  
+      </div>
     </div>
     <div id="footer">2020 Primary. Copyright Something Something.</div>
+
+    <script src="popup.js"></script>
   </body>
 </html>
