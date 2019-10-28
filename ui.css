@@ -1,0 +1,81 @@
+* {
+    /* margin: 0;
+    padding: 0; */
+    box-sizing: border-box;
+    /* Adding browser prefixes */
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+}
+.mb-5{
+    margin-bottom: 1em;
+}
+/* Styling for pop up 1 */
+a.button{
+    
+	font-size: 13px;
+	padding: 5px 10px;
+	border: 1px solid #aaa;
+	background-color: #eee;
+	background-image: linear-gradient(top, #fff, #f0f0f0);
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+	color: #666;
+	text-decoration: none;
+	text-shadow: 0 1px 0 #fff;
+	cursor: pointer;
+	transition: all 0.2s ease-out;
+}
+.overlay{
+    position: absolute;
+    top:0;
+    right:0;
+    left:0;
+    bottom:0;
+    background: rgba(0, 0, 0, .6);
+    transition: opacity 200ms;
+    display: none;
+	opacity: 1;
+}
+
+.popup1{
+    width: 500px;
+    height: 200px;
+    background: white;
+    position: relative;
+    color: black;
+    margin: auto;
+    margin-top: 2em;
+    padding: 1em;
+}
+.popup1 a{
+    color: black;
+}
+
+.overlay2{
+    position: absolute;
+    top:0;
+    right:0;
+    left:0;
+    bottom:0;
+    background: rgba(166, 166, 166, 0.6);
+    display: flex;
+    transition: opacity 200ms;
+    visibility: hidden;
+	opacity: 1;
+}
+
+.popup2{
+    width: 300px;
+    height: 200px;
+    background: white;
+    position: relative;
+    color: black;
+    margin: auto;
+    padding: 1em;
+}
+.popup1 a{
+    color: black;
+}
+
