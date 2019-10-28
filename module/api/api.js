@@ -338,6 +338,15 @@ function action_authenticate_user(request, payload) {
 	}).catch((error) => { console.log(error) });
 }
 
+function img_upload(request, payload){
+  console.log(request.files);
+  return new Promise((resolve, reject)=>{
+    if(!request || !request.headers || !payload)
+      reject("Error: Wrong request, missing request headers, or missing payload.");
+    resolve('{"message": "request recieved!"}');
+  }).catch((error)=>console.log(error));
+}
+
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
 	return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
@@ -369,6 +378,7 @@ Action.create_session = action_create_session;
 Action.get_session = action_get_session;
 Action.create_dm_conversation = create_dm_conversation;
 Action.send_direct_message = send_direct_message;
+Action.img_upload = img_upload;
 
 const resp = response => content => respond(response, content);
 
@@ -436,7 +446,10 @@ class API {
 				if (identify("direct_message", "send")) // Send DM
 					Action.send_direct_message(request, json(request.chunks))
 						.then(content => respond(response, content));
-			});
+			  if (identify("img", "upload"))
+          Action.img_upload(request, request.chunks)
+            .then(content => respond(response, content));
+      });
 		}
 	}
 	static catchAPIrequest(request) {
