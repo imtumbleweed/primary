@@ -8,38 +8,41 @@
     -webkit-box-sizing: border-box;
     -ms-box-sizing: border-box;
 }
-.mb-5{
+
+.mb-5 {
     margin-bottom: 1em;
 }
+
 /* Styling for pop up 1 */
-a.button{
-    
-	font-size: 13px;
-	padding: 5px 10px;
-	border: 1px solid #aaa;
-	background-color: #eee;
-	background-image: linear-gradient(top, #fff, #f0f0f0);
-	border-radius: 2px;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-	color: #666;
-	text-decoration: none;
-	text-shadow: 0 1px 0 #fff;
-	cursor: pointer;
-	transition: all 0.2s ease-out;
+a.button {
+
+    font-size: 13px;
+    padding: 5px 10px;
+    border: 1px solid #aaa;
+    background-color: #eee;
+    background-image: linear-gradient(top, #fff, #f0f0f0);
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    color: #666;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fff;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
 }
-.overlay{
+
+.overlay {
     position: absolute;
-    top:0;
-    right:0;
-    left:0;
-    bottom:0;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, .6);
     transition: opacity 200ms;
     display: none;
-	opacity: 1;
+    opacity: 1;
 }
 
-.popup1{
+.popup1 {
     width: 500px;
     height: 200px;
     background: white;
@@ -49,24 +52,25 @@ a.button{
     margin-top: 2em;
     padding: 1em;
 }
-.popup1 a{
+
+.popup1 a {
     color: black;
 }
 
-.overlay2{
+.overlay2 {
     position: absolute;
-    top:0;
-    right:0;
-    left:0;
-    bottom:0;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
     background: rgba(166, 166, 166, 0.6);
     display: flex;
     transition: opacity 200ms;
     visibility: hidden;
-	opacity: 1;
+    opacity: 1;
 }
 
-.popup2{
+.popup2 {
     width: 300px;
     height: 200px;
     background: white;
@@ -75,7 +79,195 @@ a.button{
     margin: auto;
     padding: 1em;
 }
-.popup1 a{
+
+.popup1 a {
     color: black;
 }
 
+/* BEGINNING OF USER BIO CSS */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
+}
+
+body {
+    background-color: #f2f2f2;
+}
+
+.container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.card {
+    display: flex;
+    height: 500px;
+}
+
+.left {
+    height: 100%;
+    width: 400px;
+    position: relative;
+    color: #fafafa;
+    border-radius: 25px 0 0 25px;
+    background: rgb(76, 179, 233);
+    background: -moz-linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: -webkit-linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#4cb3e9", endColorstr="#00d4ff", GradientType=1);
+
+}
+
+.left .profile {
+    position: relative;
+    height: 50px;
+}
+
+.left .cover {
+    width: 100%;
+    height: 200px;
+    border-radius: 25px 0 0 0;
+}
+
+.left .pdp {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: -100px;
+    left: 50%;
+    transform: translate(-50%);
+    border: 4px solid #fafafa;
+    border-radius: 100%;
+}
+
+.left .btn {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    top: calc(200px - 23px);
+    right: calc(0% - 23px);
+    border-radius: 100%;
+    color: #fafafa;
+    text-align: center;
+    background: rgb(76, 179, 233);
+    background: -moz-linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: -webkit-linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#4cb3e9", endColorstr="#00d4ff", GradientType=1);
+
+}
+
+.left .btn i {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+}
+
+.left h1 {
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 20px 0;
+    font-family: 'Roboto', 'sanserif';
+}
+
+.left .box {
+    width: 100%;
+    text-align: center;
+    display: flex;
+}
+
+.letf .box .col i {
+    font-size: 2.6em;
+    margin-bottom: 20px;
+}
+
+.fa-facebook-square:before {
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+.fa-twitter-square:before {
+    font-size: 30px;
+}
+
+.fa-heart:before {
+    font-size: 30px;
+}
+
+.left .box h2 {
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+}
+
+.left .box .col {
+    width: 33%;
+}
+
+.right {
+    width: 0px;
+    height: 100%;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.text {
+    height: 100%;
+    width: 450px;
+    padding: 15px 30px;
+}
+
+.text h1 {
+    font-family: 'Roboto', sans-serif;
+}
+
+.text h2 {
+    font-family: 'Roboto', sans-serif;
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+.text h3 {
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+
+.text p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    padding-right: 20px;
+}
+
+.text button {
+    width: 90%;
+    color: #fafafa;
+    font-family: 'Roboto', sans-serif;
+    padding: 10px 10px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    text-align: center;
+    background: rgb(76, 179, 233);
+    background: -moz-linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: -webkit-linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: linear-gradient(57deg, rgba(76, 179, 233, 1) 0%, rgba(74, 119, 233, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#4cb3e9", endColorstr="#00d4ff", GradientType=1);
+
+}
+
+.text button:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
