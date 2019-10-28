@@ -1,5 +1,5 @@
 ## Current API Endpoint Goal 
-Build out a relatively simple (3 files: index.html, index.js, api.js / mysql.js) API endpoint server. Our **first goal** is to figure out what should all commonplace API endpoints be (login,logout,updatebio,tweet,comment,like,retweet,etc...)
+Build out a relatively simple (based on the pattern formed by the 3 already-existing files: **index.html**, **index.js**, **api.js** / mysql.js) API endpoint server. Our **first goal** is to figure out what should all commonplace API endpoints be (login,logout,updatebio,tweet,comment,like,retweet,etc...)
 
 **Each endpoint has a Trello card associated with it.** So if you need to find something to do, go to **Trello** and look for an empty card :) We have 500 members on our team, but sometimes even if someone is assigned to a card, doesn't mean they're working on it. Whoever posts comments on cards usually gets attention and assignment.
 
