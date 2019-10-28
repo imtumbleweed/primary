@@ -251,27 +251,33 @@
           value="send direct message"
         /><br />
       </div>
-    </div>
-    <div id="footer" class="mb-5">2020 Primary. Copyright Something Something.</div>
 
-    <a class="button" id="pop-up1">Click to pop up modal</a>
-    <div id="POP1" class="overlay">
-      <div class="popup1">
-          Hello I am Popup 1
-          <a class="button" id="pop-up2">Click Me</a>
-          <button id="pop1Close">Close</button>
+      <h2>Pop up Example</h2>
+
+      <button id="openPopup">Open Popups</button>
+
+      <div id="firstPopup" class="popup">
+
+        <div class="popup-tweet">
+          <span class="close">&times;</span>
+          <p>Click on (&times) to open second popup.</p>
+          <p>Click on tweet to exit first popup</p>
+          <button id="tweet">Tweet</button>
+        </div>
+
       </div>
-      
-      
-    </div>
-    <div id="POP2" class="overlay2">
-      <div class="popup2">
-          Hello I am popup 2
-          <p>I am the Overlay popup</p>
-          <button id="pop2Close">Close</button>
+
+      <div id="secondPopup" class="popup">
+
+          <div class="popup-save">
+            <p>Click yes to close both popups</p>
+            <p> Click on no to go back to first popup</p>
+            <button class="no">No</button>
+            <button class="yes">Yes</button>
+          </div>
+  
       </div>
     </div>
-   
     <script src="app.js"></script>
   </body>
 </html>
