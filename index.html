@@ -119,8 +119,8 @@
 
       /* Post a tweet
            payload = {
-           id: 1,
-           payload.message: "hello" } */
+           user_id: 1,
+           message: "hello" } */
       User.tweet = function(payload) {
         fetch('/api/tweet/post', make(payload))
           .then(promise => promise.json())
@@ -234,7 +234,7 @@
         /><br />
         <input
           type="button"
-          onclick="User.tweet({user:'felix',message:'hello there, this is my tweet.'})"
+          onclick="User.tweet({user_id:4,message:'hello there, this is my tweet.'})"
           value="tweet as authenticated user"
         /><br />
         <input

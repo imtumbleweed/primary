@@ -351,10 +351,34 @@ function action_reset_password(request, payload) {
     }).catch((error) => { console.log(error) });
 }
 
+// Requires payload.message = <String message> and payload.user_id = <Int user_id>
 function action_post_tweet(request, payload) {
     return new Promise((resolve, reject) => {
-        let q = ""; // query
+        if (!request || !request.headers || !payload || !API.parts[3])
+            reject("Error: Wrong request, missing request headers, or missing payload");
+        
         /* insert message into tweet table, unless previous tweet posted by that user is identical */
+
+        let q = `SELECT * FROM tweet WHERE user_id = '${payload.user_id}' AND message = '${payload.message}' LIMIT 1`; // query
+
+        database.connection.query(q,
+            (error, results) =>{ //Check if tweet already exist
+                if(error) throw error;
+                let result = results[0];
+                if (results && results.length != 0 && result.message == payload.message)
+                    resolve(`{"success": false, "message": "tweet already exist"}`);
+                else {
+                    // console.log(payload)
+                    let fields = "( `user_id`, `message`, `timestamp` )";
+                    let values = `VALUES( ${payload.user_id}, '${payload.message}', ${timestamp()})`;
+                    database.connection.query("INSERT INTO tweet " + fields + " " + values,
+                        (error, results) => { // Create new tweet in database
+                            if (error)
+                                throw (error);
+                            resolve(`{"success": true, "message": "tweet created"}`);
+                        });
+                }
+            })
     }).catch((error) => { console.log(error) });
 }
 
