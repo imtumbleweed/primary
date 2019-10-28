@@ -354,7 +354,7 @@ function action_reset_password(request, payload) {
 // Requires payload.message = <String message> and payload.user_id = <Int user_id>
 function action_post_tweet(request, payload) {
     return new Promise((resolve, reject) => {
-        if (!request || !request.headers || !payload || !API.parts[3])
+        if (!request || !request.headers || !payload)
             reject("Error: Wrong request, missing request headers, or missing payload");
         
         /* insert message into tweet table, unless previous tweet posted by that user is identical */
@@ -364,8 +364,7 @@ function action_post_tweet(request, payload) {
         database.connection.query(q,
             (error, results) =>{ //Check if tweet already exist
                 if(error) throw error;
-                let result = results[0];
-                if (results && results.length != 0 && result.message == payload.message)
+                if (results && results.length != 0 && results[0].message == payload.message)
                     resolve(`{"success": false, "message": "tweet already exist"}`);
                 else {
                     // console.log(payload)
