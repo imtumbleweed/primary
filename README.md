@@ -1,5 +1,8 @@
-## Current Goal
+## Current API Endpoint Goal 
 Build out a relatively simple (3 files: index.html, index.js, api.js / mysql.js) API endpoint server. Our goal is to figure out what should all commonplace API endpoints be (login,logout,updatebio,tweet,comment,like,retweet,etc...) An API endpoint is a key feature to the software we're building -- we don't need to have many, just choose a few that we really do need. Endpoints are considered completed when they can be tested via buttons on the homepage (index.html file.) To make an endpoint, you have to add it to api.js -- following the same pattern already set by other end points we already created. Make sure to come up proper names, nothing complicated, no camel case.
+
+## Current UI Goal
+We need to create a vanilla page router first (there is a Trello card for it.)
 
 ## Primary Social Network
 Primary is a social network for every kind of person. Based on the preferences, each user gets its own view and layout of the app, perfectly adjusted to their needs.
