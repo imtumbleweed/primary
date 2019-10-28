@@ -11,7 +11,7 @@ process.env.node_env = "localhost";
 
 // replace xx.xx.xx.xxx with your own remote IP address or localhost (127.0.0.1)
 const ip = '127.0.0.1'; // const ip = 'xx.xx.xx.xxx';
-const port = process.env.node_env === 'production' ? 80 : 3000;
+const port = process.env.PORT || (process.env.node_env === 'production' ? 80 : 3000);
 
 http.createServer(function(request, response) {
 
