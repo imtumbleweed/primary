@@ -3,6 +3,10 @@ Build out a relatively simple (based on the pattern formed by the 3 already-exis
 
 **Each endpoint has a Trello card associated with it.** So if you need to find something to do, go to **Trello** and look for an empty card :) We have 500 members on our team, but sometimes even if someone is assigned to a card, doesn't mean they're working on it. Whoever posts comments on cards usually gets attention and assignment.
 
+**Trello board link:** https://trello.com/b/9s3pL5fD/primary
+
+**Trello invite link:** https://trello.com/invite/b/9s3pL5fD/0abbfbcc4f96a770fba8cb4839783d1e/primary
+
 An API endpoint is a key feature to the software we're building -- we don't need to have many, just choose a few that we really do need. 
 
 Endpoints are considered completed when they can be tested via buttons on the homepage (index.html file.) To make an endpoint, you have to add it to api.js -- following the same pattern already set by other end points we already created. Make sure to come up proper names, nothing complicated, no camel case.
