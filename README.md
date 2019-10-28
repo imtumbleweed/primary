@@ -37,7 +37,7 @@ Coming soon ...
 
 ## Installation
 Install dependencies using **`npm install`**. 
-Then, **`database`** must be configured. To do that, go to **`modules/config/`** folder and create duplicate **`db_config.example.json`** as **`db_config.json`**.
+Then, **`database`** must be configured. To do that, go to **`module/config/`** folder and create duplicate **`db_config.example.json`** as **`db_config.json`**.
 Finally, you can enter your database credentials into **`db_config.json`**.
 
 ## API Reference
