@@ -80,7 +80,18 @@ a.button{
 }
 
 /* Styling for password Reset here */
-
+body#p-body{
+    padding: 0;
+    margin: 0;
+}
+.p-header{
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 0 3px #aaa;
+    border-bottom: 0 solid rgba(0,0,0,0.25);
+}
 
 
 
