@@ -49,10 +49,12 @@ Object.prototype.exists = function (property_name, value) {
 
 // Check if value exists in array
 Array.prototype.exists = function (value) {
+
 	for (let i = 0; i < this.length; i++)
 		if (this[i] == value)
 			return true;
-	return false;
+    return false;
+    
 }
 
 class database {
@@ -338,6 +340,46 @@ function action_authenticate_user(request, payload) {
 	}).catch((error) => { console.log(error) });
 }
 
+function action_update_user_profile(request, payload) {
+    return new Promise((resolve, reject) => {
+        // Header or payload are missing
+        if (!request || !request.headers || !payload)
+            reject("Error: Wrong request, missing request headers, or missing payload");
+        // Payload must specify user id
+        if (!payload.id)
+            reject("User id not specified!");
+        // Columns allowed to be changed:
+        let allowed = ["id", "location", "website_url", "dob", "bio"];
+        // Exclude not-allowed fields from payload
+        Object.entries(payload).map((value, index, obj) => {
+            let name = value[0];
+            if (!allowed.exists(name)) delete payload[name];
+        });
+        // Start MySQL query
+        let query = "UPDATE user SET ";
+        // Build the rest of MySQL query from payload
+        Object.entries(payload).map((item, index, object) => {
+            let name = item[0];
+            let value = payload[name];
+            index != 0 ? query += ", " : null;
+            query += "`" + name + "` = '" + value + "'";
+        });
+        // End query
+        query += " WHERE `id` = '" + payload.id + "'";
+        // Execute MySQL query we just created
+        database.connection.query(query, (error, results) => {
+            if (error)
+                throw (error);
+            let result = results[0];
+            console.log("results[0] = ", results[0]);
+            console.log("result = ", result);
+            resolve(`{"success": true, "message": "user profile updated successfully!"}`);
+        });
+
+    }).catch(error => null);
+}
+
+
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
 	return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
@@ -369,85 +411,105 @@ Action.create_session = action_create_session;
 Action.get_session = action_get_session;
 Action.create_dm_conversation = create_dm_conversation;
 Action.send_direct_message = send_direct_message;
+Action.send_reset_link = action_send_reset_link;
+Action.reset_password = action_reset_password;
+Action.reset_password = action_reset_password;
+Action.post_tweet = action_post_tweet;
+Action.update_profile= action_update_user_profile;
 
 const resp = response => content => respond(response, content);
 
 class API {
 
-	constructor() { }
+    constructor() { }
 
-	static exec(request, response) {
+    static exec(request, response) {
 
-		console.log("API.exec(), parts = ", API.parts);
+        console.log("API.exec(), parts = ", API.parts);
 
-		if (request.method == 'POST') {
+        if (request.method == 'POST') {
 
-			request.url[0] == "/" ? request.url = request.url.substring(1, request.url.length) : null;
-			request.parts = request.url.split("/");
-			request.chunks = [];
+            request.url[0] == "/" ? request.url = request.url.substring(1, request.url.length) : null;
+            request.parts = request.url.split("/");
+            request.chunks = [];
 
-			// Start reading POST data chunks
-			request.on('data', segment => {
-				if (segment.length > 1e6) // 413 = "Request Entity Too Large"
-					response.writeHead(413, { 'Content-Type': 'text/plain' }).end();
-				else
-					request.chunks.push(segment);
-			});
+            // Start reading POST data chunks
+            request.on('data', segment => {
+                if (segment.length > 1e6) // 413 = "Request Entity Too Large"
+                    response.writeHead(413, { 'Content-Type': 'text/plain' }).end();
+                else
+                    request.chunks.push(segment);
+            });
 
-			// Finish reading POST data chunks
-			request.on('end', () => { // POST data fully received
+            // Finish reading POST data chunks
+            request.on('end', () => { // POST data fully received
 
-				API.parts = request.parts;
+                API.parts = request.parts;
 
-				if (identify("user", "register")) // Register (create) user
-					Action.register_user(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("user", "register")) // Register (create) user
+                    Action.register_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("user", "login")) // Log in
-					Action.login(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("user", "login")) // Log in
+                    Action.login(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("user", "logout")) // Log out
-					Action.logout(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("user", "logout")) // Log out
+                    Action.logout(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("user", "delete")) // Delete user
-					Action.delete_user(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("user", "delete")) // Delete user
+                    Action.delete_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("user", "get")) // Get user data
-					Action.get_user(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("user", "get")) // Get user data
+                    Action.get_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("user", "update")) // Update user
-					Action.update_user(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("user", "update")) // Update user
+                    Action.update_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("session", "create")) // Create session
-					Action.create_session(request, json(request.chunks))
-						.then(content => respond(response, content));
+                if (identify("session", "create")) // Create session
+                    Action.create_session(request, json(request.chunks))
+                        .then(content => respond(response, content));
 
-				if (identify("user", "authenticate")) // Authenticate user
-					Action.authenticate_user(request, json(request.chunks))
-						.then(content => respond(response, content));
-				if (identify("dm_conversation", "create")) // Start DM conversation
-					Action.create_dm_conversation(request, json(request.chunks))
-						.then(content => respond(response, content));
-				if (identify("direct_message", "send")) // Send DM
-					Action.send_direct_message(request, json(request.chunks))
-						.then(content => respond(response, content));
-			});
-		}
-	}
-	static catchAPIrequest(request) {
-		request[0] == "/" ? request = request.substring(1, request.length) : null;
-		if (request.constructor === String)
-			if (request.split("/")[0] == "api") {
-				API.parts = request.split("/");
-				return true;
-			}
-		return false;
-	}
+                if (identify("user", "authenticate")) // Authenticate user
+                    Action.authenticate_user(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("password", "email")) // Send password reset link
+                    Action.send_reset_link(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("password", "reset")) // Reset password
+                    Action.reset_password(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("tweet", "post")) // Post a "tweet"
+                    Action.post_tweet(request, json(request.chunks))
+                        .then(content => respond(response, content));
+
+                if (identify("user", "profile")) // Update user profile
+                    Action.update_profile(request, json(request.chunks))
+                        .then(content => respond(response, content));
+            });
+        }
+
+        if (request.method == 'GET') {
+            /* GET placeholder */
+        }
+    }
+
+    static catchAPIrequest(request) {
+        request[0] == "/" ? request = request.substring(1, request.length) : null;
+        if (request.constructor === String)
+            if (request.split("/")[0] == "api") {
+                API.parts = request.split("/");
+                return true;
+            }
+        return false;
+    }
 }
 
 API.parts = null;
