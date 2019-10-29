@@ -41,8 +41,9 @@ http.createServer(function(request, response) {
                     API.exec(request, response);
                 } else {
                     fs.readFile('./404.html', function (error, content) {
-                        response.writeHead(200, { 'Content-Type': contentType });
-                        response.end(content, 'utf-8');
+                        response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                        response.write(content);
+                        response.end();
                     });
                 }
             } else {
