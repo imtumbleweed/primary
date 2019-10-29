@@ -111,6 +111,36 @@ body#p-body{
 .mr{
     margin-right: .5em;
 }
+.reset-password{
+    height: 80vh;
+    width: 100%;
+}
+.reset-password form{
+    padding: 36px 0;
+    max-width: 500px;
+    margin: auto;
+}
+.reset-password form input{
+    display: block;
+    width: fit-content;
+}
+.reset-password button.btn-primary{
+    border: none;
+    cursor: pointer;
+    color: white;
+    border-radius: 100px;
+    box-shadow: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 6px 16px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    margin-top: 36px;
+    background: #0000FF;
+}
 
 
 
