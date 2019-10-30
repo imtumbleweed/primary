@@ -79,3 +79,81 @@ a.button{
     color: black;
 }
 
+/* Styling for password Reset here */
+body#p-body{
+    padding: 0;
+    margin: 0;
+}
+.p-header{
+    width: 100%;
+    min-height: 30px;
+    box-shadow: 0 0 3px #aaa;
+    border-bottom: 0 solid rgba(0,0,0,0.25);
+    padding: 10px;
+}
+.p-header nav{
+    margin: auto;
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-content: flex-start;
+}
+.p-header nav.logo img{
+    border-radius: 50%;
+}
+
+.p-header nav .lang,.lang{
+    display: flex;
+}
+.p-header nav .lang span{
+    margin: auto;
+}
+.mr{
+    margin-right: .5em;
+}
+.reset-password{
+    height: 80vh;
+    width: 100%;
+}
+.reset-password form{
+    padding: 36px 0;
+    max-width: 450px;
+    margin: auto;
+}
+.reset-password form input{
+    display: block;
+    width: fit-content;
+    border-radius: 18px;
+    padding: 7px 15px 5px;
+    line-height: 20px;
+    border: 1px solid#ccd6dd;
+    outline: 0;
+    font-size: 16px;
+    margin: 5px 10px 5px 0;
+}
+.reset-password form input:focus{
+    outline: #0000FF;
+}
+.reset-password button.btn-primary{
+    border: none;
+    cursor: pointer;
+    color: white;
+    border-radius: 100px;
+    box-shadow: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 6px 16px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    margin-top: 20px;
+    background: #0000FF;
+    font-size: 15px;
+}
+
+
+
+/* End of Password reset styling */
+
