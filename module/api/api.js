@@ -411,10 +411,6 @@ Action.create_session = action_create_session;
 Action.get_session = action_get_session;
 Action.create_dm_conversation = create_dm_conversation;
 Action.send_direct_message = send_direct_message;
-Action.send_reset_link = action_send_reset_link;
-Action.reset_password = action_reset_password;
-Action.reset_password = action_reset_password;
-Action.post_tweet = action_post_tweet;
 Action.update_profile= action_update_user_profile;
 
 const resp = response => content => respond(response, content);
