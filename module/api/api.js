@@ -7,7 +7,9 @@ const md5 = require('./../md5/md5.js');
 const { SHA3 } = require('sha3');
 // The Keccak hash function is also available
 const { Keccak } = require('sha3');
-
+// multipart/form-data parser
+const multiparty = require('multiparty');
+const fs = require('fs');
 // Generate timestamp: if full argument is false/undefined,
 // timestamp is divided by 1000 to generate linux-length timestamp
 function timestamp(full) {
@@ -198,11 +200,11 @@ function action_login(request, payload) {
 				if (error)
 					throw (error);
 				let result = results[0];
-        /* console.log("result = ", result);
-        console.log("payload.username = ", payload.username);
-        console.log("payload.password = ", payload.password);
-        console.log("password 1 = ", md5(payload.password));
-        console.log("password 2 = ", result.password_md5); */
+				/* console.log("result = ", result);
+				console.log("payload.username = ", payload.username);
+				console.log("payload.password = ", payload.password);
+				console.log("password 1 = ", md5(payload.password));
+				console.log("password 2 = ", result.password_md5); */
 				if (results && results.length != 0 && result.username == payload.username) {
 					// result.found = true;
 					// Check if submitted password is correct
@@ -338,13 +340,14 @@ function action_authenticate_user(request, payload) {
 	}).catch((error) => { console.log(error) });
 }
 
-function img_upload(request, payload){
-  console.log(request.files);
-  return new Promise((resolve, reject)=>{
-    if(!request || !request.headers || !payload)
-      reject("Error: Wrong request, missing request headers, or missing payload.");
-    resolve('{"message": "request recieved!"}');
-  }).catch((error)=>console.log(error));
+function img_upload(request, payload) {
+	return new Promise((resolve, reject) => {
+		if (!request || !request.headers || !payload)
+			reject("Error: Wrong request, missing request headers, or missing payload.");
+		// Below is what looks like the binary data for the file
+		console.log(Buffer.concat(payload).toString())
+		resolve(`{"message": "ok"}`)
+	}).catch((error) => console.log(error));
 }
 
 // Check if API.parts match a URL pattern, example: "api/user/get"
@@ -446,10 +449,10 @@ class API {
 				if (identify("direct_message", "send")) // Send DM
 					Action.send_direct_message(request, json(request.chunks))
 						.then(content => respond(response, content));
-			  if (identify("img", "upload"))
-          Action.img_upload(request, request.chunks)
-            .then(content => respond(response, content));
-      });
+				if (identify("img", "upload"))
+					Action.img_upload(request, request.chunks)
+						.then(content => respond(response, content));
+			});
 		}
 	}
 	static catchAPIrequest(request) {
