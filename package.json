@@ -1,0 +1,25 @@
+{
+  "name": "primary",
+  "version": "1.0.0",
+  "description": "Build out a relatively simple (based on the pattern formed by the 3 already-existing files: **index.html**, **index.js**, **api.js** / mysql.js) API endpoint server. Our **first goal** is to figure out what should all commonplace API endpoints be (login,logout,updatebio,tweet,comment,like,retweet,etc...)",
+  "main": "index.js",
+  "dependencies": {
+    "ip": "^1.1.5",
+    "mysql": "^2.17.1",
+    "sha3": "^2.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javascriptteacher/primary.git"
+  },
+  "author": "Hussain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/javascriptteacher/primary/issues"
+  },
+  "homepage": "https://github.com/javascriptteacher/primary#readme"
+}
