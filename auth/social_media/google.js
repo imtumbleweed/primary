@@ -1,5 +1,5 @@
 const { google } = require("googleapis");
-const queryString = require("query-string");
+
 
 class GoogleAuthService {
   constructor(client_id, client_secret, redirect_url) { 
@@ -15,9 +15,13 @@ class GoogleAuthService {
 		})()
 	}
 
-
+	
+	/**
+	 * googleUrlGenerator returns a url which will
+	 * be returned to user when the endpoint is accessed
+	 * The url that asks permissions for people scopes
+	 */
 	googleUrlGenerator() {
-    // generate a url that asks permissions for people scopes
     const scopes = [
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/userinfo.email"
@@ -33,15 +37,24 @@ class GoogleAuthService {
 		return {url}
 	}
 
+	/**
+	 * 
+	 * @param {*} oauth 
+	 * call the google people api
+	 */
 	getPeopleApi(oauth){
    return google.people({ version: 'v1', auth: oauth })
 	}
 
-	//parse request url to extract code
-	//and generate authorization tokens
-  async parseUrl(codeUrl){
+
+	/**
+	 * 
+	 * @param {*} code 
+	 * recieves a query string from app callback
+	 * and generates auth tokens
+	 */
+  async parseUrl(code){
 		try {
-			let code = queryString.parse(codeUrl)["/auth/google/callback?code"];
 			const data = await this.oauth2Client.getToken(code)
 			return data
 		} catch (error) {
@@ -49,7 +62,11 @@ class GoogleAuthService {
 		}
 	}
 
-	
+	/**
+	 * 
+	 * @param {*} tokens 
+	 * 
+	 */
   async googleAuthService(tokens) {
 		const oauth2Client = this.oauth2Client
 		try {
@@ -69,4 +86,3 @@ class GoogleAuthService {
 }
 
 module.exports = { GoogleAuthService }
-
