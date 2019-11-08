@@ -388,9 +388,9 @@ function identify(a, b) {
 // General use respond function -- send json object back to the browser in response to a request
 function respond(response, content) {
 	console.log("responding = ", [content]);
-	const jsontype = "{ 'Content-Type': 'application/json' }";
-	response.writeHead(200, jsontype);
-	response.end(content, 'utf-8');
+ 
+	response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+	response.end(content);
 }
 
 // Convert buffer to JSON object

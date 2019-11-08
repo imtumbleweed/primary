@@ -35,22 +35,28 @@ http.createServer(function(request, response) {
     fs.readFile(filename, function (error, content) {
         if (error) {
             if (error.code == 'ENOENT') {
-                if (API.catchAPIrequest( request.url ))
+                if (API.catchAPIrequest( request.url )) {
+                    console.log("API request detecting...");
+
                     API.exec(request, response);
-                else
+                } else {
                     fs.readFile('./404.html', function (error, content) {
-                        response.writeHead(200, { 'Content-Type': contentType });
-                        response.end(content, 'utf-8');
+                        response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                        response.write(content);
+                        response.end();
                     });
+                }
             } else {
               response.writeHead(500)
               response.end('Server error: ' + error.code + ' ..\n');
               response.end();
             }
-        } 
-        console.log("API request detecting...");
-        response.writeHead(200, { 'Content-Type': contentType });
-        response.end(content, 'utf-8');
+        } else {
+            console.log("Returning a static file...");
+
+            response.writeHead(200, { 'Content-Type': contentType });
+            response.end(content, 'utf-8');
+        }
         
     });
 }).listen(port, ip);
