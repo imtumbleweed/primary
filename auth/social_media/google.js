@@ -2,7 +2,7 @@ const { google } = require("googleapis");
 
 
 class GoogleAuthService {
-  constructor(client_id, client_secret, redirect_url) { 
+  constructor({client_id, client_secret, redirect_url}) { 
 		this.client_id = client_id
 		this.client_secret = client_secret
 		this.redirect_url = redirect_url
