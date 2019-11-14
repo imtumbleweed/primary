@@ -3,11 +3,11 @@ const fetch = require("node-fetch");
 const tag = strings => strings.raw[0];
 
 class FacebookAuthService {
-  constructor({ app_id, redirect_uri, client_secret, state }) {
-    this.client_id = app_id;
-    this.redirect_uri = redirect_uri;
-    this.client_secret = client_secret;
-    this.state = state;
+  constructor() {
+    this.client_id = process.env.facebook_client_id
+    this.redirect_uri = process.env.facebook_redirect_uri
+    this.client_secret = process.env.facebook_client_secret
+    this.state = process.env.facebook_state_secret
   }
 
   // A string value created by your app to maintain state between the request and callback
@@ -80,7 +80,8 @@ class FacebookAuthService {
    */
   async graphApi(access_token) {
     try {
-      const url = `https://graph.facebook.com/me?access_token=${access_token}&fields=id,name,email`;
+			const url = `https://graph.facebook.com/me?access_token`+
+			`=${access_token}&fields=id,name,email`
       const response = await fetch(url);
       const person = await response.json();
       return person;

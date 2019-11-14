@@ -219,9 +219,6 @@ function action_login(request, payload) {
 	}).catch(error => console.log(error));
 }
 
-function action_google_login(){
-	
-}
 
 function action_logout(request, payload) {
 	return new Promise((resolve, reject) => {

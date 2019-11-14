@@ -3,15 +3,15 @@ const { google } = require("googleapis");
 
 
 class GoogleAuthService {
-  constructor({client_id, client_secret, redirect_url}) { 
-		this.client_id = client_id
-		this.client_secret = client_secret
-		this.redirect_url = redirect_url
+  constructor() { 
+		this.client_id = process.env.google_client_id
+		this.client_secret = process.env.google_client_secret
+		this.redirect_uri = process.env.google_redirect_uri
 		this.oauth2Client = (() => {
 			return  new google.auth.OAuth2(
 				this.client_id,
 				this.client_secret,
-				this.redirect_url
+				this.redirect_uri
 			);
 		})()
 	}
