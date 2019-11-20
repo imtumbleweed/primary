@@ -18,24 +18,22 @@ class GoogleAuthService {
 
 	
 	/**
-	 * googleUrlGenerator returns a url which will
-	 * be returned to user when the endpoint is accessed
+	 *  returns a url which will be returned to user (with a sign in button) 
+	 * when the endpoint is accessed.
 	 * The url that asks permissions for people scopes
 	 */
-	googleUrlGenerator() {
-    const scopes = [
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/userinfo.email"
-		];
-		
-		const url = this.oauth2Client.generateAuthUrl({
-			// 'online' (default) or 'offline' (gets refresh_token)
-			access_type: "offline",
-			prompt: "consent",
-			scope: scopes
-		})
-
-		return {url}
+	async authenticate(scopes) {
+    try {
+			const url = await this.oauth2Client.generateAuthUrl({
+				// 'online' (default) or 'offline' (gets refresh_token)
+				access_type: "offline",
+				prompt: "consent",
+				scope: scopes
+			})
+			return {url}		
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
 	/**
