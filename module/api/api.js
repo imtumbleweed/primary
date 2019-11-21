@@ -1,4 +1,5 @@
 const ip = require('ip');
+const fs = require('fs')
 const querystring = require('querystring');
 const mysql = require('mysql');
 const db_config = require('./../config/db_config.json');
@@ -8,6 +9,8 @@ const md5 = require('./../md5/md5.js');
 const { SHA3 } = require('sha3');
 // The Keccak hash function is also available
 const { Keccak } = require('sha3');
+
+const path = require('path')
 
 // import soial media authentication services
 const { GoogleAuthService } = require('../../auth/social_media/google')
@@ -63,8 +66,30 @@ class database {
 	constructor() { }
 	static create() {
 		let message = "Creating MySQL connection...";
-		this.connection = mysql.createConnection(db_config);
-		this.connection.connect();
+		//this.connection = mysql.createConnection(db_config);
+		this.connection = mysql.createPool(db_config)
+		//this.connection.connect();
+		
+		fs.readFile(path.join(__dirname, 'init.sql'), 'utf-8', (err, data) => {
+			if (err) {
+				console.error('error reading sql file', err);
+			}
+
+			this.connection.getConnection((err, connection) => {
+				if (err) throw err; // not connected!
+	 
+				// Use the connection
+				connection.query(data, function (error, results, fields) {
+				// When done with the connection, release it.
+				connection.release();
+	 
+				// Handle error after the release.
+				if (error) throw error;
+	 
+				// Don't use the connection here, it has been returned to the pool.
+				})
+			})
+		})
 		console.log(message + "Ok.");
 	}
 }
@@ -86,8 +111,10 @@ function action_register_user(request, payload) {
 					let avatar = JSON.stringify({ "head": 1, "eyes": 1 });
 					// Encrypt payload.password with md5 algorithm
 					let password_md5 = md5(payload.password);
-					let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`, `avatar` )";
-					let values = `VALUES( '${payload.username}', '${payload.email_address}', '${password_md5}', 'first', 'last', '${avatar}')`;
+					// let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`, `avatar` )";
+					let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`)";
+					let values = `VALUES( '${payload.username}', '${payload.email_address}', '${password_md5}', 'first', 'last')`;
+					// let values = `VALUES( '${payload.username}', '${payload.email_address}', '${password_md5}', 'first', 'last', '${avatar}')`;
 					database.connection.query("INSERT INTO user " + fields + " " + values,
 						(error, results) => { // Create new user in database
 							if (error)
