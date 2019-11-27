@@ -1,5 +1,7 @@
 module/config/db_config.json
 node_modules/
+
 .idea/
+.vscode/
 .DS_Store
 
