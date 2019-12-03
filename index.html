@@ -91,7 +91,7 @@
           });
 			};
 			
-
+     /* Login a user using google social button */
 			User.googleLogin = function(payload){
 				fetch('/api/user/google', make(payload))
 				.then(promise => {
