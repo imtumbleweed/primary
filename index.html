@@ -17,7 +17,8 @@
           headers: { Accept: 'application/json' },
           body: JSON.stringify(payload)
         };
-      };
+			};
+
 
       /* Create user in database
            payload = {
@@ -88,7 +89,17 @@
           .then(json => {
             console.log(json);
           });
-      };
+			};
+			
+
+			User.googleLogin = function(payload){
+				fetch('/api/user/google', make(payload))
+				.then(promise => {
+					console.log('PROMISE', promise)
+				   window.location.href = promise.url
+				})
+				.catch(err => console.log(new Error('GOOGLEAUTHERR', err)))
+			}
 
       /* Confirm verification code (optional)
            payload = {
@@ -249,6 +260,11 @@
           type="button"
           onclick="User.sendDirectMessage({dm_conversation_id: 1, user_id_from: 2, user_id_to: 1, message_body: 'It goes down in the DM'})"
           value="send direct message"
+				/><br />
+				<input
+          type="button"
+          onclick="User.googleLogin()"
+          value="Login through google"
         /><br />
       </div>
 

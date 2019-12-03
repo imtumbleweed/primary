@@ -30,7 +30,7 @@ class GoogleAuthService {
 				prompt: "consent",
 				scope: scopes
 			})
-			return {url}		
+			return url		
 		} catch (error) {
 			console.error(error)
 		}
@@ -67,10 +67,9 @@ class GoogleAuthService {
 	 * 
 	 */
   async googleAuthService(tokens) {
-		const oauth2Client = this.oauth2Client
+		
 		try {
-		oauth2Client.setCredentials(tokens)
-		const personApi = this.getPeopleApi(oauth2Client)
+		const personApi = this.getPeopleApi(this.oauth2Client.setCredentials(tokens))
 
 		const person = await personApi.people.get({
 			resourceName: "people/me",
@@ -78,7 +77,7 @@ class GoogleAuthService {
 		})
       return person
 		} catch (error) {
-			console.error(error)
+			console.error("autheservice error:",error)
 		}
   }
 

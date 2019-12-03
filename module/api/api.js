@@ -70,22 +70,19 @@ class database {
 		this.connection = mysql.createPool(db_config)
 		//this.connection.connect();
 		
-		fs.readFile(path.join(__dirname, 'init.sql'), 'utf-8', (err, data) => {
+		fs.readFile(path.join(__dirname, '../../db/init.sql'), 'utf-8', (err, data) => {
 			if (err) {
 				console.error('error reading sql file', err);
 			}
 
 			this.connection.getConnection((err, connection) => {
 				if (err) throw err; // not connected!
-	 
 				// Use the connection
 				connection.query(data, function (error, results, fields) {
 				// When done with the connection, release it.
 				connection.release();
-	 
 				// Handle error after the release.
 				if (error) throw error;
-	 
 				// Don't use the connection here, it has been returned to the pool.
 				})
 			})
@@ -370,7 +367,7 @@ function action_authenticate_user(request, payload) {
 	}).catch((error) => { console.log(error) });
 }
 
-// google auuthentication
+// google authentication
 /**
  * step 1: generate a url which gives access to a sign-in  button
  * and redirects app to this url
@@ -393,11 +390,14 @@ const googleAuth = new GoogleAuthService()
 function google_login(){
 	return new Promise((resolve, reject) => {
 		googleAuth.authenticate(googleAuthScopes)
-		.then(uri => resolve(uri))
+		.then((uri) => {
+			resolve(uri)
+		})
 		.catch((error) => { console.log(error) })
 	})
 }
 
+// authentication callback funtion for google login 
 function google_login_callback(request, payload){
   return new Promise((resolve, reject) => {
 		if (!request || !request.headers)
@@ -406,6 +406,7 @@ function google_login_callback(request, payload){
 		const code = querystring.parse(url, '?').code
 		googleAuth.parseUrl(code)
 		.then(data => {
+			console.log('PARSEDATA', JSON.stringify(data, undefined, 2))
 		 let tokens = data.tokens
 		 googleAuth.googleAuthService(tokens)
 		 .then(person => {
@@ -415,47 +416,52 @@ function google_login_callback(request, payload){
 			// 	 email: person.data.emailAddresses,
 			// 	 photo: person.data.photos
 			//  }))
+			console.log('the person', person)
 			//confirm if person already exists and create person if false
 			//inspect person data for proper response e.g data.email.value
-			database.connection.query(`SELECT * FROM \`user\` WHERE \`email\` = '${person.email}'`,
-			(error, results) => { // Check if user already exists in database
-				if (error)
-					throw (error);
-				let result = results[0];
-        /* console.log("result = ", result);
-        console.log("payload.username = ", payload.username);
-        console.log("payload.password = ", payload.password);
-        console.log("password 1 = ", md5(payload.password));
-        console.log("password 2 = ", result.password_md5); */
-				if (results && results.length != 0 && result.email == payload.email) {
-					// result.found = true;
-					// return authenticated user
-					resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
-				}
-				// User not found => create user
-				// resolve(`{"success": false, "user": null, "message": "user with this username(${payload.username}) doesn't exist"}`);
-		    let avatar = JSON.stringify({ "head": 1, "eyes": 1 });
-					// Encrypt payload.password with md5 algorithm
-					//	let password_md5 = md5(payload.password);
-					// question? how to deal with password for social media users
-					let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`, `avatar` )";
-					let values = `VALUES( '${person.username}', '${person.email_address}','', '${person.first_name}', '${person.last_name}', '${avatar}')`;
-					database.connection.query("INSERT INTO user " + fields + " " + values,
-						(error, results) => { // Create new user in database
-							if (error)
-								throw (error);
-							  resolve(`{"success": true, "user": ${JSON.stringify(results[0])}, "message": "user successfully logged in!"}`);
-						});
-			})
+			// database.connection.query(`SELECT * FROM \`user\` WHERE \`email\` = '${person.email}'`,
+			// (error, results) => { // Check if user already exists in database
+			// 	if (error)
+			// 		throw (error);
+			// 	let result = results[0];
+      //   /* console.log("result = ", result);
+      //   console.log("payload.username = ", payload.username);
+      //   console.log("payload.password = ", payload.password);
+      //   console.log("password 1 = ", md5(payload.password));
+      //   console.log("password 2 = ", result.password_md5); */
+			// 	if (results && results.length != 0 && result.email == payload.email) {
+			// 		// result.found = true;
+			// 		// return authenticated user
+			// 		resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
+			// 	}
+			// 	// User not found => create user
+			// 	// resolve(`{"success": false, "user": null, "message": "user with this username(${payload.username}) doesn't exist"}`);
+		  //   let avatar = JSON.stringify({ "head": 1, "eyes": 1 });
+			// 		// Encrypt payload.password with md5 algorithm
+			// 		//	let password_md5 = md5(payload.password);
+			// 		// question? how to deal with password for social media users
+			// 		let fields = "( `username`, `email_address`, `password_md5`, `first_name`, `last_name`, `avatar` )";
+			// 		let values = `VALUES( '${person.username}', '${person.email_address}','', '${person.first_name}', '${person.last_name}', '${avatar}')`;
+			// 		database.connection.query("INSERT INTO user " + fields + " " + values,
+			// 			(error, results) => { // Create new user in database
+			// 				if (error)
+			// 					throw (error);
+			// 				  resolve(`{"success": true, "user": ${JSON.stringify(results[0])}, "message": "user successfully logged in!"}`);
+			// 			});
+			// })
 		 })
 		})
-		.catch(err => console.error(err.stack))
+		.catch(err => console.error('callback ERR!!:', err))
 	})
 }
 
 
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
+	return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
+}
+
+function identifyCallback(b,c){
 	return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
 }
 
@@ -467,10 +473,14 @@ function respond(response, content) {
 	response.end(content, 'utf-8');
 }
 
-function oauthRespond(response, authPath) {
-	console.log("responding = ", [content]);
-	const jsontype = { 'Location': authPath }
-	response.writeHead(301, jsontype)
+function redirect(response, content) {
+	response.setHeader('Access-Control-Allow-Origin', '*')
+	response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+	response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+	response.setHeader('Access-Control-Allow-Credentials', true)
+	response.writeHead(301, {
+	 	'Location': content
+	})
 	response.end()
 }
 
@@ -532,13 +542,9 @@ class API {
 					Action.login(request, json(request.chunks))
 						.then(content => respond(response, content));
 
-				if (identify("user", "google")) // google authenticate
+				if (identify("user", "google"))
 					Action.google()
-						.then(content => oauthRespond(response, authPath))
-
-				if (identify("user", "google/callback")) // google callback authenticate
-					Action.googleCallback()
-						.then(content => respond(response, content))
+					.then(url => redirect(response, url))
 
 				if (identify("user", "logout")) // Log out
 					Action.logout(request, json(request.chunks))
@@ -570,7 +576,29 @@ class API {
 					Action.send_direct_message(request, json(request.chunks))
 						.then(content => respond(response, content));
 			});
-		}
+		 }else if(request.method == 'GET'){
+			 
+			request.chunks = [];
+
+			// Start reading POST data chunks
+			request.on('data', segment => {
+				if (segment.length > 1e6) // 413 = "Request Entity Too Large"
+					response.writeHead(413, { 'Content-Type': 'text/plain' }).end();
+				else
+					request.chunks.push(segment);
+			})
+			.on('end', () => {
+				response.on("error", err => console.error(err.stack));
+
+			//match the google login callback request 
+			if ((/^\/api\/user\/google\/callback.+/).test(request.url)){
+					Action.googleCallback(request)
+				.then(content => respond(response, content))
+				.catch(err => console.error(err))
+				}		
+			})
+
+		 }
 	}
 	static catchAPIrequest(request) {
 		request[0] == "/" ? request = request.substring(1, request.length) : null;
